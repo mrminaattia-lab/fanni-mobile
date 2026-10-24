@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>فني موبايلي | مساعد الصيانة</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#18263d;--text:#f4f7fb;--muted:#aebbd0;--accent:#55dfb3;--line:#2b3b54;--warn:#ffcf70}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101a2b,#080e18);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.65}
+main{max-width:760px;margin:auto;padding:18px}.hero{padding:22px 18px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,#172940,#101827);margin-bottom:16px}
+.logo{display:inline-grid;place-items:center;width:54px;height:54px;border-radius:16px;background:#163d3a;color:var(--accent);font-size:28px;margin-bottom:8px}
+h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}p{margin:5px 0;color:var(--muted)}.tag{display:inline-block;color:var(--accent);font-size:12px;border:1px solid #2e655c;border-radius:30px;padding:2px 10px;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card,.section{border:1px solid var(--line);background:var(--panel);border-radius:17px;padding:15px;margin-bottom:12px}.tile{width:100%;text-align:right;min-height:108px;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:15px;padding:13px;cursor:pointer;font:inherit}.tile b{display:block;font-size:16px}.tile span{font-size:13px;color:var(--muted)}button{font:inherit;cursor:pointer}.primary{background:var(--accent);color:#06241c;border:0;border-radius:12px;padding:11px 15px;font-weight:750}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 13px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.step{border-right:3px solid var(--accent);padding:3px 12px;margin:13px 0}.step b{display:block}.warning{border:1px solid #755c2e;background:#302719;color:#ffe5ad;border-radius:12px;padding:11px;font-size:13px;margin-top:12px}.hidden{display:none}label{display:block;margin:9px 0 5px;color:var(--muted);font-size:14px}input,select,textarea{width:100%;background:#0b1423;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px;font:inherit}textarea{min-height:110px;resize:vertical}.muted{font-size:13px;color:var(--muted)}.result{white-space:pre-wrap;background:#0b1423;padding:13px;border-radius:12px;border:1px solid var(--line);margin-top:10px}.footer{text-align:center;font-size:12px;color:var(--muted);padding:15px}
+@media(max-width:440px){main{padding:12px}.grid{gap:8px}.tile{padding:10px}.hero{padding:18px}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<div class="logo">🔧</div><div class="tag">نسخة تجريبية مجانية</div>
+<h1>فني موبايلي</h1>
+<p>مساعدك في تشخيص أعطال الموبايل خطوة بخطوة — ابدأ بالأعراض، ثم نفّذ القياس وسجّل النتيجة.</p>
+</section>
+
+<section id="home">
+<h2>اختار نوع العطل</h2>
+<div class="grid">
+<button class="tile" onclick="start('power')"><b>🔋 فاصل باور</b><span>الجهاز لا يعمل نهائيًا</span></button>
+<button class="tile" onclick="start('charge')"><b>🔌 عطل شحن</b><span>لا يشحن أو الشحن متقطع</span></button>
+<button class="tile" onclick="start('short')"><b>⚡ شورت / سحب عالي</b><span>سخونة أو استهلاك غير طبيعي</span></button>
+<button class="tile" onclick="start('screen')"><b>📱 عطل شاشة</b><span>سوداء أو خطوط أو إضاءة</span></button>
+</div>
+<div class="section" style="margin-top:14px">
+<h2>🧠 مساعد الذكاء الاصطناعي</h2>
+<p>اكتب الموديل والأعراض ونتائج القياس. جهّز وصفًا منظمًا تنسخه إلى ChatGPT. تحليل الصور يحتاج رفع الصورة داخل المحادثة أيضًا.</p>
+<button class="secondary" onclick="showAI()">فتح نموذج التشخيص الذكي</button>
+</div>
+<div class="section">
+<h2>📏 قواعد قياس سريعة</h2>
+<p><b>البازر:</b> يفيد في اختبار الاستمرارية وبعض حالات القصر، لكنه لا يثبت وحده أن القطعة سليمة أو تالفة.</p>
+<p><b>المقاومة/الدايود:</b> قارن بالمرجع أو بخط مماثل؛ القراءة تختلف حسب الدائرة واتجاه المجسات.</p>
+<p><b>الباور سبلاي:</b> راقب سحب التيار مع ضبط الجهد والحد الحالي المناسبين للجهاز.</p>
+</div>
+</section>
+
+<section id="diagnosis" class="hidden">
+<div class="section">
+<div class="tag">مسار فحص إرشادي</div><h2 id="diagTitle">تشخيص العطل</h2>
+<p id="diagIntro"></p>
+<div id="steps"></div>
+<label for="observation">اكتب نتيجة الفحص عندك</label>
+<textarea id="observation" placeholder="مثال: جهد البطارية كذا، لا يوجد سحب عند الضغط على الباور..."></textarea>
+<div class="actions"><button class="primary" onclick="makeReport()">تجهيز تقرير العطل</button><button class="secondary" onclick="goHome()">رجوع</button></div>
+<div id="report" class="result hidden"></div>
+<div class="actions hidden" id="reportActions"><button class="secondary" onclick="copyReport()">نسخ التقرير</button><button class="secondary" onclick="sendToAI()">تجهيز سؤال للذكاء الاصطناعي</button></div>
+<div class="warning">أمان: افصل البطارية قبل قياس المقاومة/البازر أو فك المكونات. لا توصل الباور سبلاي عشوائيًا ولا تحقن جهدًا في خط مجهول.</div>
+</div>
+</section>
+
+<section id="ai" class="hidden">
+<div class="section">
+<h2>🧠 تجهيز سؤال التشخيص</h2>
+<p>املأ البيانات ثم اضغط «إنشاء السؤال». انسخه إلى ChatGPT، وارفع صورة البوردة هناك إن كانت مفيدة.</p>
+<label for="model">موديل الجهاز</label><input id="model" placeholder="مثال: Samsung SM-T111">
+<label for="fault">العطل والأعراض</label><textarea id="fault" placeholder="الجهاز فاصل باور / لا يشحن / سخونة..."></textarea>
+<label for="tools">الأدوات المتاحة</label><input id="tools" value="أفوميتر، باور سبلاي">
+<label for="readings">القياسات التي أجريتها</label><textarea id="readings" placeholder="اكتب الجهد، سحب التيار، وضع القياس، مكان القياس..."></textarea>
+<button class="primary" onclick="buildAI()">إنشاء السؤال</button>
+<div id="aiPrompt" class="result hidden"></div>
+<div class="actions"><button class="secondary" onclick="copyAI()">نسخ السؤال</button><button class="secondary" onclick="goHome()">الرئيسية</button></div>
+<div class="warning">لا تعتبر اقتراح الذكاء الاصطناعي حكمًا نهائيًا. أكّد التشخيص بالقياس والمخطط، ولا تنفّذ خطوات قد تتلف اللوحة دون التأكد.</div>
+</div>
+</section>
+<div class="footer">فني موبايلي • نسخة أولية تعمل داخل المتصفح • لا تستبدل مخطط الصيانة أو القياسات الفعلية</div>
+</main>
+<script>
+const data={
+power:{title:"تشخيص فاصل باور",intro:"ابدأ بالفحوص الآمنة بالترتيب، ولا تستبدل أي قطعة قبل إثبات العطل.",steps:[
+["فحص ظاهري","افحص آثار السوائل أو الكسر أو التآكل أو مكونات محترقة."],
+["البطارية والموصل","افحص جهد البطارية وتلامس الأطراف. لا تفترض قيمة واحدة لكل أنواع البطاريات."],
+["استهلاك الباور سبلاي","استخدم كابل/توصيل مناسبًا واضبط الجهد حسب مواصفات البطارية، وراقب السحب عند الضغط على زر الباور."],
+["زر الباور وخطوط التغذية","افحص زر الباور وواصلات البطارية وخطوط التغذية حسب المخطط إن توفر."],
+["تسجيل النتيجة","سجل الجهد والتيار وسلوك الجهاز: لا سحب، سحب لحظي، أو سحب مستمر."]]},
+charge:{title:"تشخيص عطل الشحن",intro:"افحص من مدخل الشحن باتجاه دائرة الحماية والشحن، مع الرجوع لمخطط الموديل.",steps:[
+["الكابل والشاحن","جرّب شاحنًا وكابلًا معروفين بالسلامة."],
+["مدخل الشحن","افحص الاتساخ أو التآكل أو تلف السنون، والجهاز مفصول عن الطاقة."],
+["VBUS","قِس وجود جهد VBUS بالطريقة الآمنة وعلى نقطة اختبار مناسبة، وقارن بالمخطط."],
+["الحماية والمسار","افحص الفيوز/OVP والملفات والمكونات المتصلة بالمسار حسب تصميم الجهاز؛ الترتيب يختلف بين الموديلات."],
+["IC الشحن والبطارية","بعد استبعاد المدخل والمسار، افحص البطارية وإشارات الشحن والـIC حسب المخطط."]]},
+short:{title:"تشخيص شورت أو سحب عالي",intro:"تجنب حقن الجهد قبل تحديد الخط المتأثر وحدود الجهد والتيار الآمنة.",steps:[
+["افصل مصادر الطاقة","افصل البطارية والشاحن قبل قياس المقاومة أو وضع البازر."],
+["حدد الخط","استخدم المخطط أو نقاط القياس لتحديد خط التغذية المشتبه به."],
+["قياس إلى الأرضي","قِس المقاومة/وضع الدايود إلى الأرضي وقارن بخط مماثل أو مرجع موثوق؛ البازر وحده ليس دليلًا قاطعًا."],
+["الباور سبلاي","إذا كنت مدربًا، استخدم جهدًا وحد تيار مناسبين للخط المحدد فقط، وراقب السخونة بأداة آمنة."],
+["وثّق النتيجة","سجل الخط والقراءة ومكان السخونة قبل إزالة أي مكون."]]},
+screen:{title:"تشخيص عطل الشاشة",intro:"ميّز بين عطل الشاشة نفسها وعطل الإضاءة أو التغذية أو الاتصال.",steps:[
+["فحص الشاشة والموصل","افصل البطارية قبل إعادة تركيب الفلاتة، وافحص الموصل من تلف أو اتساخ."],
+["هل الجهاز يعمل؟","تحقق من الصوت أو الاهتزاز أو اتصال الجهاز بالكمبيوتر إن كان ذلك مناسبًا."],
+["اختبار شاشة سليمة","إن توفرت شاشة متوافقة ومضمونة، اختبرها دون ضغط أو ثني الفلاتة."],
+["الإضاءة والتغذية","في شاشات LCD افحص مسار الإضاءة حسب المخطط؛ OLED لا تستخدم دائرة backlight التقليدية نفسها."],
+["تحديد النتيجة","سجل نوع الشاشة والموديل ونتيجة الشاشة البديلة والقياسات قبل الحكم."]]}
+};
+let current="";
+function hideAll(){["home","diagnosis","ai"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
+function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
+function start(type){current=type;hideAll();document.getElementById("diagnosis").classList.remove("hidden");document.getElementById("diagTitle").textContent=data[type].title;document.getElementById("diagIntro").textContent=data[type].intro;document.getElementById("observation").value="";document.getElementById("report").classList.add("hidden");document.getElementById("reportActions").classList.add("hidden");document.getElementById("steps").innerHTML=data[type].steps.map((s,i)=>`<div class="step"><b>${i+1}. ${s[0]}</b><span>${s[1]}</span></div>`).join("")}
+function makeReport(){let obs=document.getElementById("observation").value.trim();let d=data[current];let out=d.title+"\n\n"+d.intro+"\n\n"+d.steps.map((s,i)=>(i+1)+". "+s[0]+": "+s[1]).join("\n")+"\n\nنتيجة الفحص التي سجلها الفني:\n"+(obs||"لم تُسجّل قياسات بعد.")+"\n\nالخطوة التالية: حدّد الاحتمالات بناءً على القياسات الفعلية والمخطط الخاص بالموديل.";document.getElementById("report").textContent=out;document.getElementById("report").classList.remove("hidden");document.getElementById("reportActions").classList.remove("hidden")}
+async function copyText(t){try{await navigator.clipboard.writeText(t);alert("تم النسخ إذا سمح المتصفح بذلك.");}catch(e){alert("النسخ التلقائي غير متاح. اضغط مطولًا على النص وانسخه يدويًا.")}}
+function copyReport(){copyText(document.getElementById("report").textContent)}
+function showAI(){hideAll();document.getElementById("ai").classList.remove("hidden")}
+function sendToAI(){showAI();document.getElementById("fault").value=data[current].title+"\n"+data[current].intro;document.getElementById("readings").value=document.getElementById("observation").value}
+function buildAI(){let m=document.getElementById("model").value.trim()||"غير معروف";let f=document.getElementById("fault").value.trim()||"لم يتم وصف العطل";let t=document.getElementById("tools").value.trim()||"لم تحدد";let r=document.getElementById("readings").value.trim()||"لم تُجرَ قياسات بعد";let p=`أنت مساعد فني صيانة هواتف محمولة. ساعدني في تشخيص العطل خطوة بخطوة وباللغة العربية المصرية البسيطة.\nموديل الجهاز: ${m}\nالعطل والأعراض: ${f}\nالأدوات المتاحة: ${t}\nالقياسات ونتائج الفحص: ${r}\n\nالمطلوب:\n1) لا تفترض أن قطعة معينة تالفة من دون دليل.\n2) اسألني سؤالًا واحدًا في كل مرة إذا كانت هناك معلومة أساسية ناقصة.\n3) أعطني الخطوة التالية فقط: مكان القياس، وضع الأفوميتر، طريقة توصيل المجسات، وما الذي تعنيه النتيجة.\n4) اذكر أن القراءات تختلف حسب الموديل، واطلب المخطط عند الحاجة.\n5) نبّهني لمخاطر توصيل الطاقة أو حقن الجهد. لا تعطِ قيمة جهد عشوائية.\n6) افصل بين الاحتمالات والنتيجة المؤكدة.`;document.getElementById("aiPrompt").textContent=p;document.getElementById("aiPrompt").classList.remove("hidden")}
+function copyAI(){let e=document.getElementById("aiPrompt");if(e.classList.contains("hidden")){buildAI();e=document.getElementById("aiPrompt")}copyText(e.textContent)}
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
