@@ -138,14 +138,6 @@ document.getElementById("report").classList.add("hidden");
 document.getElementById("reportActions").classList.add("hidden");
 
 renderQuestion();
- current=type;answers={};questionIndex=0;reportText="";
- hideAll();document.getElementById("diagnosis").classList.remove("hidden");
- document.getElementById("diagTitle").textContent=data[type].title;
- document.getElementById("diagIntro").textContent=data[type].intro;
- document.getElementById("finalReport").classList.add("hidden");
- document.getElementById("report").classList.add("hidden");
- document.getElementById("reportActions").classList.add("hidden");
- renderQuestion();
 }
 function renderQuestion(){
  const qs=data[current].questions, q=qs[questionIndex], host=document.getElementById("wizard");
