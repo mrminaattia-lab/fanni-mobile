@@ -121,7 +121,23 @@ screen:{title:"تشخيص عطل الشاشة",intro:"حدد أولًا هل ا�
 let current="", answers={}, questionIndex=0, reportText="";
 function hideAll(){["home","diagnosis","ai"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
 function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
-function start(type){
+function start(type){current=type;
+answers={};
+questionIndex=0;
+reportText="";
+hideAll();
+
+document.getElementById("diagnosis").classList.remove("hidden");
+document.getElementById("wizard").classList.remove("hidden");
+document.getElementById("wizardActions").classList.remove("hidden");
+
+document.getElementById("diagTitle").textContent=data[type].title;
+document.getElementById("diagIntro").textContent=data[type].intro;
+document.getElementById("finalReport").classList.add("hidden");
+document.getElementById("report").classList.add("hidden");
+document.getElementById("reportActions").classList.add("hidden");
+
+renderQuestion();
  current=type;answers={};questionIndex=0;reportText="";
  hideAll();document.getElementById("diagnosis").classList.remove("hidden");
  document.getElementById("diagTitle").textContent=data[type].title;
