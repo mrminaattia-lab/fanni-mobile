@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>فني موبايلي | مساعد الصيانة</title>
+<meta name="app-build" content="smart-tree-fix-2026-10-28">
 <style>
 :root{--bg:#0b1220;--panel:#121d30;--panel2:#18263d;--text:#f4f7fb;--muted:#aebbd0;--accent:#55dfb3;--line:#2b3b54;--warn:#ffcf70}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101a2b,#080e18);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.65}
@@ -448,4 +449,4 @@ function analyzeDraw(){
  if(voltage!==null)evidence.push("الجهد الذي أدخلته هو "+voltage+"V؛ لا يمكن الحكم على ملاءمته من دون مواصفات الجهاز وطريقة توصيل الباور سبلاي.");
  evidence.push("المنصة المدخلة: "+platformName+". نوع المعالج لا يحدد وحده نمط سحب ثابتًا لجميع الأجهزة.");
  const out=["تحليل سحبات الباور سبلاي — فني موبايلي","الموديل: "+model,"المنصة: "+platformName,"الجهد المدخل: "+(voltage===null?"لم يُسجّل":voltage+" V"),"السحب قبل الضغط: "+before+" A","السحب أثناء/بعد الضغط: "+after+" A","النمط المختار: "+({zero:"صفر تقريبًا",pulse:"قفزة لحظية ثم صفر",cycling:"سحب متغير/متكرر",steady:"سحب مستمر والجهاز لا يقلع",high:"سحب مرتفع أو سخونة",normal:"الجهاز يبدو أنه يقلع"})[kind],"","ملاحظات أولية:",...evidence.map(x=>"• "+x),"","خطوات الفحص التالية:",...next.map((x,i)=>(i+1)+") "+x),"","ملاحظات الفني: "+notes,"","تنبيه: هذه احتمالات تعليمية وليست تشخيصًا نهائيًا. القيم تختلف حسب الموديل واللوحة وإعدادات الاختبار؛ أكّد كل خطوة بالمخطط والقياس الآمن."];
- lastDrawAnalysis=out.join("\n");document.getElementById("drawResult").textContent=lastDrawAnalysis;document.getElementById("drawResult").classLis
+ lastDrawAnalysis=out.join("\n");document.getElementById("drawResult").textContent=las
