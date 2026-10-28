@@ -7,6 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>فني موبايلي | مساعد الصيانة</title>
+<meta name="app-build" content="smart-tree-fix-2026-10-28">
 <style>
 :root{--bg:#0b1220;--panel:#121d30;--panel2:#18263d;--text:#f4f7fb;--muted:#aebbd0;--accent:#55dfb3;--line:#2b3b54;--warn:#ffcf70}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#101a2b,#080e18);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.65}
@@ -17,6 +18,9 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 .choice{display:flex;align-items:flex-start;gap:9px;background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:12px;margin:8px 0;cursor:pointer}.choice input{width:auto;margin-top:6px;accent-color:var(--accent)}.progress{height:7px;background:#0b1423;border-radius:20px;overflow:hidden;margin:12px 0}.progress>div{height:100%;background:var(--accent);width:0;transition:width .2s}.question-note{border-right:3px solid var(--warn);padding:8px 11px;background:#211f1a;border-radius:8px;color:#ffe5ad;font-size:13px;margin-top:12px}
 .ency-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}.ency-item{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:right;color:var(--text);width:100%;min-height:76px}.ency-item b{display:block}.ency-item span{color:var(--muted);font-size:12px}.ency-content{white-space:pre-wrap;line-height:1.8;background:#0b1423;border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:12px}.filters{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.filters button{font-size:13px;padding:7px 10px}.filters button.active{background:var(--accent);color:#06241c;border-color:var(--accent)}
 @media(max-width:440px){main{padding:12px}.grid,.ency-grid{gap:8px}.tile{padding:10px}.hero{padding:18px}}
+
+.tree-illustration{border:1px solid var(--line);border-radius:16px;background:#0d1727;padding:10px;margin:14px 0;text-align:center}.tree-illustration small{display:block;color:var(--muted);font-size:12px}.tree-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}.tree-table th,.tree-table td{border:1px solid var(--line);padding:8px;text-align:right;vertical-align:top}.tree-table th{background:var(--panel2);color:var(--accent)}.tree-options{display:grid;gap:8px;margin:12px 0}.tree-option{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer}.tree-option input{margin-top:6px;accent-color:var(--accent)}.tree-step-title{margin:16px 0 6px}.tree-result-list{padding-right:20px}.tree-result-list li{margin:7px 0}
+
 </style>
 </head>
 <body>
@@ -36,6 +40,7 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <button class="tile" onclick="start('screen')"><b>📱 عطل شاشة</b><span>سوداء أو خطوط أو إضاءة</span></button>
 <button class="tile" onclick="showDrawAnalyzer()"><b>📊 محلل سحبات الباور</b><span>قبل الضغط وبعده وتفسير الخطوة التالية</span></button>
 <button class="tile" onclick="showSolderingGuide()"><b>🛠️ دليل اللحام العملي</b><span>فك وتركيب SMD وتنظيف البادات والجمبر</span></button>
+<button class="tile" onclick="showSmartTree()"><b>🧭 شجرة تشخيص الأعطال الذكية</b><span>أسئلة متدرجة وخطوة القياس التالية</span></button>
 </div>
 <div class="section" style="margin-top:14px">
 <h2>🧠 مساعد الذكاء الاصطناعي</h2>
@@ -144,6 +149,55 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <div class="actions"><button class="secondary" onclick="goHome()">الرئيسية</button><button class="secondary" onclick="clearSolderingSearch()">مسح البحث</button></div>
 </div>
 </section>
+<section id="smartTree" class="hidden">
+<div class="section">
+<div class="tag">مسار تشخيص متدرّج</div>
+<h2>🧭 شجرة تشخيص الأعطال الذكية</h2>
+<p>اختار العَرَض الأقرب، وجاوب على قدّ القياسات اللي نفذتها. كل إجابة هتوجّهك للخطوة التالية بدل تغيير قطع بالتخمين.</p>
+<div class="tree-illustration" role="img" aria-label="مخطط خطوات التشخيص">
+<svg viewBox="0 0 320 190" width="100%" height="190" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="treeArrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#55dfb3"/></marker></defs>
+<rect x="82" y="8" width="156" height="38" rx="10" fill="#183d3b" stroke="#55dfb3"/><text x="160" y="32" fill="#f4f7fb" font-size="12" text-anchor="middle">حدّد العَرَض</text>
+<path d="M160 46 V67" stroke="#55dfb3" stroke-width="2" marker-end="url(#treeArrow)"/>
+<rect x="82" y="70" width="156" height="38" rx="10" fill="#18263d" stroke="#58718e"/><text x="160" y="94" fill="#f4f7fb" font-size="12" text-anchor="middle">افحص بأمان</text>
+<path d="M160 108 V126 H54 V141 M160 126 H266 V141" stroke="#55dfb3" stroke-width="2" fill="none" marker-end="url(#treeArrow)"/>
+<rect x="6" y="143" width="96" height="36" rx="8" fill="#18263d" stroke="#58718e"/><text x="54" y="165" fill="#f4f7fb" font-size="11" text-anchor="middle">قِس وقارن</text>
+<rect x="218" y="143" width="96" height="36" rx="8" fill="#18263d" stroke="#58718e"/><text x="266" y="165" fill="#f4f7fb" font-size="11" text-anchor="middle">حدّد التالي</text>
+</svg>
+<small>العَرَض ← فحص آمن ← قياس موثوق ← قرار الخطوة التالية</small>
+</div>
+<label for="treeSymptom">إيه العطل الأساسي؟</label>
+<select id="treeSymptom" onchange="resetSmartTree()">
+<option value="">اختار العَرَض</option>
+<option value="power">الجهاز لا يعمل نهائيًا</option>
+<option value="charge">عطل شحن</option>
+<option value="short">سخونة أو شورت أو سحب عالي</option>
+<option value="screen">الجهاز يعمل لكن الشاشة بها مشكلة</option>
+<option value="boot">يفصل على اللوجو أو يعيد التشغيل</option>
+<option value="audio">الصوت أو الميكروفون لا يعمل</option>
+<option value="liquid">سوائل أو تآكل ظاهر</option>
+</select>
+<div id="treeStartHint" class="question-note">ابدأ باختيار العَرَض. لو مش متأكد، اختار أقرب وصف وما تعتبرش ده تشخيص نهائي.</div>
+<div id="treeQuestionHost"></div>
+<div id="treeResult" class="result hidden" aria-live="polite"></div>
+<div class="actions" id="treeActions">
+<button class="primary" onclick="nextSmartTree()">التالي</button>
+<button class="secondary" onclick="restartSmartTree()">إعادة من البداية</button>
+<button class="secondary" onclick="goHome()">الرئيسية</button>
+</div>
+<div class="section">
+<h3>📋 مرجع سريع: أستخدم أنهي وضع في الأفوميتر؟</h3>
+<table class="tree-table"><thead><tr><th>الفحص</th><th>وضع القياس</th><th>مهم تعرف</th></tr></thead><tbody>
+<tr><td>وجود جهد</td><td>DC Voltage (V⎓)</td><td>الجهاز موصل بالطاقة فقط عند القياس المسموح، والمجس على نقطة معروفة.</td></tr>
+<tr><td>مقاومة خط</td><td>Ω</td><td>افصل البطارية والطاقة أولًا، وانتظر تفريغ الدائرة.</td></tr>
+<tr><td>استمرارية</td><td>🔔 البازر</td><td>الصفارة وحدها لا تثبت وجود شورت؛ بعض الخطوط مقاومتها منخفضة طبيعيًا.</td></tr>
+<tr><td>وضع الدايود</td><td>Diode</td><td>سجّل اتجاه المجسات وقارن بنفس المرجع أو بلوحة سليمة مماثلة.</td></tr>
+<tr><td>تيار الإقلاع</td><td>باور سبلاي</td><td>سجّل النمط قبل الضغط وبعده؛ لا تحكم من رقم واحد دون مرجع الموديل.</td></tr>
+</tbody></table>
+</div>
+<div class="warning"><b>قواعد أمان:</b> افصل البطارية ومصادر الطاقة قبل المقاومة أو البازر. لا تحقن جهدًا في خط مجهول، ولا ترفع الجهد عشوائيًا. لو في سخونة سريعة أو رائحة أو انتفاخ بطارية، أوقف الاختبار. لا تستبدل IC أو معالج اعتمادًا على عرض واحد أو قراءة واحدة.</div>
+</div>
+</section>
 <div class="footer">فني موبايلي • التشخيص إرشادي ولا يستبدل مخطط الصيانة أو القياسات الفعلية</div>
 </main>
 
@@ -175,7 +229,7 @@ screen:{title:"تشخيص عطل الشاشة",intro:"حدد أولًا هل ا�
 ]}
 };
 let current="", answers={}, questionIndex=0, reportText="";
-function hideAll(){["home","diagnosis","ai","encyclopedia","drawAnalyzer","solderingGuide"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
+function hideAll(){["home","diagnosis","ai","encyclopedia","drawAnalyzer","solderingGuide","smartTree"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
 function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
 function start(type){
  current=type;answers={};questionIndex=0;reportText="";
@@ -395,14 +449,4 @@ function analyzeDraw(){
  if(voltage!==null)evidence.push("الجهد الذي أدخلته هو "+voltage+"V؛ لا يمكن الحكم على ملاءمته من دون مواصفات الجهاز وطريقة توصيل الباور سبلاي.");
  evidence.push("المنصة المدخلة: "+platformName+". نوع المعالج لا يحدد وحده نمط سحب ثابتًا لجميع الأجهزة.");
  const out=["تحليل سحبات الباور سبلاي — فني موبايلي","الموديل: "+model,"المنصة: "+platformName,"الجهد المدخل: "+(voltage===null?"لم يُسجّل":voltage+" V"),"السحب قبل الضغط: "+before+" A","السحب أثناء/بعد الضغط: "+after+" A","النمط المختار: "+({zero:"صفر تقريبًا",pulse:"قفزة لحظية ثم صفر",cycling:"سحب متغير/متكرر",steady:"سحب مستمر والجهاز لا يقلع",high:"سحب مرتفع أو سخونة",normal:"الجهاز يبدو أنه يقلع"})[kind],"","ملاحظات أولية:",...evidence.map(x=>"• "+x),"","خطوات الفحص التالية:",...next.map((x,i)=>(i+1)+") "+x),"","ملاحظات الفني: "+notes,"","تنبيه: هذه احتمالات تعليمية وليست تشخيصًا نهائيًا. القيم تختلف حسب الموديل واللوحة وإعدادات الاختبار؛ أكّد كل خطوة بالمخطط والقياس الآمن."];
- lastDrawAnalysis=out.join("\n");document.getElementById("drawResult").textContent=lastDrawAnalysis;document.getElementById("drawResult").classList.remove("hidden");document.getElementById("drawResultActions").classList.remove("hidden");
-}
-function copyDrawResult(){if(lastDrawAnalysis)copyText(lastDrawAnalysis)}
-function sendDrawToAI(){showAI();document.getElementById("fault").value="تحليل سحبات الباور سبلاي — فاصل باور/سلوك تيار";document.getElementById("readings").value=lastDrawAnalysis||"لم يتم إنشاء تحليل بعد";document.getElementById("aiPrompt").classList.add("hidden")}
-
-if ("serviceWorker" in navigator) {
- window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
-}
-</script>
-</body>
-</html>
+ lastDrawAnalysis=out.join("\n");document.getElementById("drawResult").textContent=las
