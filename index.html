@@ -35,6 +35,7 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <button class="tile" onclick="start('short')"><b>⚡ شورت / سحب عالي</b><span>سخونة أو استهلاك غير طبيعي</span></button>
 <button class="tile" onclick="start('screen')"><b>📱 عطل شاشة</b><span>سوداء أو خطوط أو إضاءة</span></button>
 <button class="tile" onclick="showDrawAnalyzer()"><b>📊 محلل سحبات الباور</b><span>قبل الضغط وبعده وتفسير الخطوة التالية</span></button>
+<button class="tile" onclick="showSolderingGuide()"><b>🛠️ دليل اللحام العملي</b><span>فك وتركيب SMD وتنظيف البادات والجمبر</span></button>
 </div>
 <div class="section" style="margin-top:14px">
 <h2>🧠 مساعد الذكاء الاصطناعي</h2>
@@ -130,6 +131,19 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <div class="warning">أمان مهم: افحص القطبية والتوصيل وحدّ التيار قبل التشغيل. لا توصل الباور سبلاي إلى نقاط مجهولة، ولا ترفع الجهد أو تحقن جهدًا في خط مجهول. أوقف الاختبار عند سخونة سريعة أو سحب غير طبيعي. لا توجد قيمة سحب واحدة تصلح لكل الهواتف؛ قارن بمخطط ومرجع نفس الموديل إن توفر.</div>
 </div>
 </section>
+<section id="solderingGuide" class="hidden">
+<div class="section">
+<div class="tag">تدريب عملي للمبتدئ</div>
+<h2>🛠️ دليل اللحام والـ Microsoldering</h2>
+<p>ابدأ على بوردة خردة قبل أي جهاز عميل. اختر العملية لعرض خطواتها والأخطاء الشائعة.</p>
+<label for="solderSearch">ابحث في الدليل</label>
+<input id="solderSearch" placeholder="مثال: بادات، قصدير، جمبر، هواء ساخن" oninput="renderSolderingGuide()">
+<div id="solderGuideList" class="ency-grid"></div>
+<div id="solderGuideDetail" class="ency-content hidden"></div>
+<div class="warning"><b>سلامة مهمة:</b> افصل البطارية والطاقة تمامًا قبل اللحام. استخدم شفاط أبخرة وتهوية مناسبة، واحمِ الأجزاء البلاستيكية والموصلات القريبة. لا تستخدم حرارة أو هواءً ساخنًا على بطارية مركبة أو منتفخة، ولا ترفع الحرارة لمجرد أن القطعة لم تتحرك.</div>
+<div class="actions"><button class="secondary" onclick="goHome()">الرئيسية</button><button class="secondary" onclick="clearSolderingSearch()">مسح البحث</button></div>
+</div>
+</section>
 <div class="footer">فني موبايلي • التشخيص إرشادي ولا يستبدل مخطط الصيانة أو القياسات الفعلية</div>
 </main>
 
@@ -161,7 +175,7 @@ screen:{title:"تشخيص عطل الشاشة",intro:"حدد أولًا هل ا�
 ]}
 };
 let current="", answers={}, questionIndex=0, reportText="";
-function hideAll(){["home","diagnosis","ai","encyclopedia","drawAnalyzer"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
+function hideAll(){["home","diagnosis","ai","encyclopedia","drawAnalyzer","solderingGuide"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
 function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
 function start(type){
  current=type;answers={};questionIndex=0;reportText="";
@@ -311,6 +325,20 @@ function renderEncyclopedia(){
 function setEncyclopediaCategory(c){encyclopediaCategory=c;renderEncyclopedia()}
 function openEncyclopediaArticle(id){const a=encyclopediaArticles.find(x=>x.id===id);if(!a)return;const d=document.getElementById("encyDetail");d.textContent=a.title+"\n\n"+a.body;d.classList.remove("hidden");d.scrollIntoView({behavior:"smooth",block:"nearest"})}
 function clearEncyclopediaSearch(){document.getElementById("encySearch").value="";encyclopediaCategory="الكل";document.getElementById("encyDetail").classList.add("hidden");renderEncyclopedia()}
+
+const solderingArticles=[
+{id:"iron",title:"1) تجهيز الكاوية والقصدير",desc:"اختيار السن وضبط البداية",body:"الهدف: نقل حرارة كافية بسرعة من غير تسخين البوردة لفترة طويلة.\n\n1. اختَر سنًا مناسبًا لحجم الباد؛ السن الأكبر قليلًا قد ينقل الحرارة أفضل من سن إبرة دقيق جدًا.\n2. نظّف السن بإسفنجة مناسبة أو منظف السن، ثم غطّه بطبقة رقيقة من القصدير.\n3. استخدم فلكس إلكترونيات مناسبًا، وكمية قصدير صغيرة.\n4. اضبط الحرارة وفق نوع السبيكة والسن واللوحة؛ كنقطة بداية تعليمية شائعة قد تكون قرابة 320–350°C للقصدير الخالي من الرصاص، وأقل غالبًا للقصدير المحتوي على الرصاص، لكن لا تعتمد الرقم وحده واتبع توصية المواد والمحطة.\n5. اختبر على بوردة خردة: المطلوب أن ينساب القصدير خلال وقت قصير، لا أن تظل تلامس الباد طويلًا. إذا لم ينساب، افحص نظافة السن والفلكس والتلامس قبل رفع الحرارة."},
+{id:"smd",title:"2) فك وتركيب مقاومة أو مكثف SMD",desc:"تدريب على المكونات الصغيرة",body:"الفك: 1) صوّر اتجاه القطعة ومكانها قبل الإزالة. 2) ضع فلكسًا قليلًا. 3) سخّن الطرفين بالتبادل بالكاوية أو استخدم هواءً ساخنًا مضبوطًا مع حماية المكونات المحيطة. 4) ارفع القطعة بملقط عندما يذوب القصدير؛ لا تسحبها بالقوة.\n\nالتركيب: 1) نظّف البادين بلطف. 2) ضع نقطة قصدير صغيرة على باد واحد. 3) أمسك القطعة بالملقط وثبّت طرفها الأول. 4) اضبط المحاذاة ثم لحّم الطرف الثاني. 5) افحص الجسور والقصر بالمجهر/عدسة مناسبة، ثم قِس حسب نوع القطعة والدائرة.\n\nتجنّب: الضغط على القطعة وهي ساخنة، زيادة القصدير، أو استخدام البازر وحده للحكم على سلامة المكوّن."},
+{id:"pads",title:"3) تنظيف البادات وإزالة القصدير الزائد",desc:"تجهيز مكان القطعة دون اقتلاع النحاس",body:"1) افصل البطارية وكل مصادر الطاقة. 2) أضف فلكسًا مناسبًا. 3) استخدم فتيل إزالة القصدير بعرض مناسب مع سن كاوية نظيف. 4) المس الفتيل برفق ولا تضغط ولا تحرّكه بعنف فوق الباد. 5) ارفع الفتيل والكاوية معًا عندما يذوب القصدير، ولا تتركهما ثابتين طويلًا. 6) افحص البادات: يجب أن تبقى ملتصقة باللوحة. 7) نظّف بقايا الفلكس بمادة مناسبة للإلكترونيات واترك اللوحة تجف تمامًا قبل القياس أو التشغيل.\n\nلو الباد بدأ يتحرك أو يغمق لون اللوحة، توقّف واتركها تبرد؛ الاستمرار قد يقتلع النحاس."},
+{id:"hotair",title:"4) استخدام محطة الهواء الساخن",desc:"تدفق الهواء والحرارة والحماية",body:"1) ابدأ على بوردة خردة وحدد المكوّن والمنطقة المحيطة. 2) استخدم فلكسًا مناسبًا وغطِّ الأجزاء الحساسة عند الحاجة. 3) اختر فوهة وتدفق هواء مناسبين؛ الهواء القوي قد يطير المكونات الصغيرة. 4) لا توجد درجة واحدة صحيحة لكل اللوحات: تختلف حسب المحطة والفوهة والسبيكة وحجم الأرضي والمكوّن. ابدأ بإعداد معتدل موصى به للمحطة، وحرّك الفوهة باستمرار وراقب انصهار القصدير. 5) لا تدفع المكوّن أو ترفعه قبل انصهار اللحام بالكامل. 6) اترك المنطقة تبرد طبيعيًا قبل الفحص.\n\nلا تسخّن بطارية أو شاشة أو موصلًا بلا حماية، ولا تستخدم إعدادات عامة على جهاز عميل قبل التدريب."},
+{id:"jumper",title:"5) عمل جمبر بعد قطع مسار",desc:"إصلاح مسار مقطوع بشكل آمن",body:"لا تعمل جمبر قبل تحديد المسار من المخطط أو Boardview والتأكد من أن الانقطاع هو سبب العطل.\n\n1) حدّد نقطتي الاتصال الصحيحتين وتأكد أنهما على نفس الشبكة. 2) اكشط طبقة الحماية برفق شديد عند نقطة مناسبة فقط، دون قطع مسارات مجاورة. 3) اختبر الاستمرارية والطاقة مفصولة. 4) ثبّت سلكًا رفيعًا مناسبًا للتيار ووظيفة الخط، مع أقل طول عملي. 5) اعزل السلك وثبّته ميكانيكيًا حتى لا يتحرك. 6) افحص عدم وجود قصر مع الخطوط المجاورة قبل إعادة توصيل البطارية.\n\nلا تستخدم سلكًا رفيعًا عشوائيًا لخطوط التيار العالي أو البطارية، ولا تجسر خطًا مجهول الوظيفة."},
+{id:"ic",title:"6) فك وتركيب IC",desc:"مبادئ عامة — يحتاج تدريبًا وخبرة",body:"هذه عملية متقدمة نسبيًا. تدرب أولًا على بوردة خردة غير مهمة، ولا تبدأ بمعالج أو ذاكرة أو آيسي حساس.\n\nقبل الفك: تأكد من رقم القطعة واتجاهها وموقعها، واحمِ الموصلات والأجزاء المجاورة، واستخدم فلكسًا مناسبًا. سخّن بالتساوي مع حركة مستمرة حتى يذوب اللحام؛ ارفع الآيسي دون ليّ أو قوة.\n\nبعد الفك: نظّف البادات بأداة مناسبة وبضغط خفيف، وافحص عدم اقتلاعها. التركيب يتطلب محاذاة دقيقة ونمط كرات/لحام مناسبًا للقطعة؛ بعض الآيسيهات ذات BGA تحتاج تجهيزًا ومعدات وخبرة خاصة. بعد التركيب افحص الجسور والقصر وخطوط التغذية حسب المخطط قبل التشغيل.\n\nلا توجد درجة حرارة أو مدة ثابتة آمنة لكل IC؛ تعتمد على اللوحة والمحطة والقطعة. إذا لم تتحرك القطعة، لا تسحبها بالقوة ولا ترفع الحرارة عشوائيًا."},
+{id:"inspection",title:"7) الفحص بعد اللحام",desc:"خطوات ما قبل توصيل الطاقة",body:"1) افحص بصريًا وجود جسور قصدير أو مكونات مقلوبة أو مفقودة. 2) نظّف بقايا الفلكس واترك اللوحة تجف. 3) والبطارية مفصولة، افحص القصر بين خطوط التغذية والأرضي فقط مع فهم أن بعض الخطوط قد تعطي قراءات منخفضة طبيعيًا. 4) قارن بمرجع أو مخطط الجهاز. 5) أعد توصيل الطاقة فقط بعد التأكد من القطبية وعدم وجود جسر واضح. 6) راقب السحب والحرارة، وأوقف التشغيل فورًا عند سحب غير طبيعي أو سخونة سريعة."}
+];
+function showSolderingGuide(){hideAll();document.getElementById("solderingGuide").classList.remove("hidden");renderSolderingGuide();document.getElementById("solderingGuide").scrollIntoView({behavior:"smooth",block:"start"})}
+function renderSolderingGuide(){const q=(document.getElementById("solderSearch").value||"").trim().toLowerCase();const items=solderingArticles.filter(a=>(a.title+" "+a.desc+" "+a.body).toLowerCase().includes(q));document.getElementById("solderGuideList").innerHTML=items.map(a=>`<button class="ency-item" onclick="openSolderingArticle('${a.id}')"><b>${a.title}</b><span>${a.desc}</span></button>`).join("")||"<p>لا توجد نتائج؛ جرّب كلمة بحث أخرى.</p>"}
+function openSolderingArticle(id){const a=solderingArticles.find(x=>x.id===id);if(!a)return;const d=document.getElementById("solderGuideDetail");d.textContent=a.title+"\n\n"+a.body;d.classList.remove("hidden");d.scrollIntoView({behavior:"smooth",block:"nearest"})}
+function clearSolderingSearch(){document.getElementById("solderSearch").value="";document.getElementById("solderGuideDetail").classList.add("hidden");renderSolderingGuide()}
 
 let lastDrawAnalysis="";
 function showDrawAnalyzer(){hideAll();document.getElementById("drawAnalyzer").classList.remove("hidden");document.getElementById("drawAnalyzer").scrollIntoView({behavior:"smooth",block:"start"})}
