@@ -34,6 +34,7 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <button class="tile" onclick="start('charge')"><b>🔌 عطل شحن</b><span>لا يشحن أو الشحن متقطع</span></button>
 <button class="tile" onclick="start('short')"><b>⚡ شورت / سحب عالي</b><span>سخونة أو استهلاك غير طبيعي</span></button>
 <button class="tile" onclick="start('screen')"><b>📱 عطل شاشة</b><span>سوداء أو خطوط أو إضاءة</span></button>
+<button class="tile" onclick="showDrawAnalyzer()"><b>📊 محلل سحبات الباور</b><span>قبل الضغط وبعده وتفسير الخطوة التالية</span></button>
 </div>
 <div class="section" style="margin-top:14px">
 <h2>🧠 مساعد الذكاء الاصطناعي</h2>
@@ -108,6 +109,27 @@ h1{font-size:25px;margin:0 0 5px}h2{font-size:19px;margin:0 0 10px}h3{font-size:
 <div class="warning">تنبيه: افصل البطارية ومصادر الطاقة قبل قياس المقاومة أو استخدام البازر. لا تحقن جهدًا في خط مجهول، ولا تستبدل قطعة اعتمادًا على قراءة واحدة.</div>
 </div>
 </section>
+<section id="drawAnalyzer" class="hidden">
+<div class="section">
+<div class="tag">أداة قياس إرشادية</div>
+<h2>📊 محلل سحبات الباور سبلاي</h2>
+<p>سجّل ما تراه على شاشة الباور سبلاي فعلًا. التحليل يحدد احتمالات وخطوة فحص تالية، وليس حكمًا نهائيًا على آيسي أو معالج.</p>
+<label for="drawModel">موديل الجهاز (اختياري)</label><input id="drawModel" placeholder="مثال: Samsung A325F">
+<label for="drawPlatform">منصة الجهاز (لو معروفة)</label>
+<select id="drawPlatform"><option value="unknown">غير معروف</option><option value="mtk">MediaTek</option><option value="qualcomm">Qualcomm</option><option value="other">منصة أخرى</option></select>
+<label for="drawVoltage">جهد الباور سبلاي المضبوط (V)</label><input id="drawVoltage" type="number" inputmode="decimal" min="0" max="5" step="0.01" placeholder="مثال: حسب مواصفات البطارية والجهاز">
+<p class="muted">لا تستخدم قيمة جهد عامة لكل الأجهزة. اضبط الجهد والحد الحالي حسب مواصفات الجهاز وطريقة التوصيل المعتمدة.</p>
+<label for="drawBefore">السحب قبل الضغط على زر الباور (A)</label><input id="drawBefore" type="number" inputmode="decimal" min="0" step="0.001" placeholder="مثال: 0.000">
+<label for="drawAfter">السحب أثناء/بعد الضغط على زر الباور (A)</label><input id="drawAfter" type="number" inputmode="decimal" min="0" step="0.001" placeholder="مثال: 0.085">
+<label for="drawPattern">شكل السحب اللي لاحظته</label>
+<select id="drawPattern"><option value="auto">استنتج من الأرقام فقط</option><option value="zero">صفر تقريبًا طوال الوقت</option><option value="pulse">قفزة لحظية ثم صفر</option><option value="cycling">السحب يعلى وينزل أو يتكرر</option><option value="steady">سحب ثابت والجهاز لا يقلع</option><option value="high">سحب مرتفع أو سخونة سريعة</option><option value="normal">السحب يتغير والجهاز يبدو أنه يقلع</option></select>
+<label for="drawNotes">ملاحظات إضافية (اختياري)</label><textarea id="drawNotes" placeholder="هل توجد سخونة؟ هل يهتز الجهاز؟ هل تأكدت من البطارية والتوصيل؟"></textarea>
+<div class="actions"><button class="primary" onclick="analyzeDraw()">حلّل السحبة</button><button class="secondary" onclick="clearDrawAnalyzer()">مسح البيانات</button><button class="secondary" onclick="goHome()">الرئيسية</button></div>
+<div id="drawResult" class="result hidden" aria-live="polite"></div>
+<div class="actions hidden" id="drawResultActions"><button class="primary" onclick="sendDrawToAI()">إرسال النتائج لنموذج سؤال الذكاء الاصطناعي</button><button class="secondary" onclick="copyDrawResult()">نسخ التحليل</button></div>
+<div class="warning">أمان مهم: افحص القطبية والتوصيل وحدّ التيار قبل التشغيل. لا توصل الباور سبلاي إلى نقاط مجهولة، ولا ترفع الجهد أو تحقن جهدًا في خط مجهول. أوقف الاختبار عند سخونة سريعة أو سحب غير طبيعي. لا توجد قيمة سحب واحدة تصلح لكل الهواتف؛ قارن بمخطط ومرجع نفس الموديل إن توفر.</div>
+</div>
+</section>
 <div class="footer">فني موبايلي • التشخيص إرشادي ولا يستبدل مخطط الصيانة أو القياسات الفعلية</div>
 </main>
 
@@ -139,7 +161,7 @@ screen:{title:"تشخيص عطل الشاشة",intro:"حدد أولًا هل ا�
 ]}
 };
 let current="", answers={}, questionIndex=0, reportText="";
-function hideAll(){["home","diagnosis","ai","encyclopedia"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
+function hideAll(){["home","diagnosis","ai","encyclopedia","drawAnalyzer"].forEach(id=>document.getElementById(id).classList.add("hidden"))}
 function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
 function start(type){
  current=type;answers={};questionIndex=0;reportText="";
@@ -289,6 +311,66 @@ function renderEncyclopedia(){
 function setEncyclopediaCategory(c){encyclopediaCategory=c;renderEncyclopedia()}
 function openEncyclopediaArticle(id){const a=encyclopediaArticles.find(x=>x.id===id);if(!a)return;const d=document.getElementById("encyDetail");d.textContent=a.title+"\n\n"+a.body;d.classList.remove("hidden");d.scrollIntoView({behavior:"smooth",block:"nearest"})}
 function clearEncyclopediaSearch(){document.getElementById("encySearch").value="";encyclopediaCategory="الكل";document.getElementById("encyDetail").classList.add("hidden");renderEncyclopedia()}
+
+let lastDrawAnalysis="";
+function showDrawAnalyzer(){hideAll();document.getElementById("drawAnalyzer").classList.remove("hidden");document.getElementById("drawAnalyzer").scrollIntoView({behavior:"smooth",block:"start"})}
+function clearDrawAnalyzer(){["drawModel","drawVoltage","drawBefore","drawAfter","drawNotes"].forEach(id=>document.getElementById(id).value="");document.getElementById("drawPlatform").value="unknown";document.getElementById("drawPattern").value="auto";document.getElementById("drawResult").classList.add("hidden");document.getElementById("drawResultActions").classList.add("hidden");lastDrawAnalysis=""}
+function analyzeDraw(){
+ const model=document.getElementById("drawModel").value.trim()||"غير محدد";
+ const platform=document.getElementById("drawPlatform").value;
+ const voltageText=document.getElementById("drawVoltage").value.trim();
+ const beforeText=document.getElementById("drawBefore").value.trim();
+ const afterText=document.getElementById("drawAfter").value.trim();
+ const pattern=document.getElementById("drawPattern").value;
+ const notes=document.getElementById("drawNotes").value.trim()||"لا توجد ملاحظات إضافية";
+ if(beforeText===""||afterText===""){alert("اكتب قراءة السحب قبل الضغط وبعده بالأمبير، أو سجّل القراءة الفعلية التي تظهر على الباور سبلاي.");return}
+ const before=Number(beforeText), after=Number(afterText), voltage=voltageText===""?null:Number(voltageText);
+ if(!Number.isFinite(before)||!Number.isFinite(after)||before<0||after<0||(voltage!==null&&(!Number.isFinite(voltage)||voltage<=0||voltage>5))){alert("راجع الأرقام: التيار بالأمبير ولا يكون سالبًا، والجهد المدخل يجب أن يكون موجبًا وألا يتجاوز 5V في هذه الأداة. لا تضبط جهد الجهاز اعتمادًا على هذا الحد؛ ارجع لمواصفاته.");return}
+ let kind=pattern, evidence=[] , next=[];
+ const nearZero=x=>x<0.005;
+ if(kind==="auto"){
+  if(nearZero(before)&&nearZero(after))kind="zero";
+  else if(after>before*3&&after-before>=0.02)kind="steady";
+  else kind="cycling";
+ }
+ const platformName=({unknown:"غير محددة",mtk:"MediaTek",qualcomm:"Qualcomm",other:"أخرى"})[platform];
+ if(kind==="zero"){
+  evidence.push("القراءات المدخلة قريبة من الصفر قبل الضغط وبعده.");
+  next.push("تأكد أولًا من قطبية وتلامس كابل الباور سبلاي، وثبات المشابك، وإعداد الجهد وحدّ التيار المناسبين.");
+  next.push("قِس جهد البطارية/خط VBAT عند نقطة معروفة، ثم افحص مسار زر الباور وإشارته حسب مخطط الموديل.");
+  next.push("إذا كانت التغذية وإشارة الزر سليمتين، تتبع خطوط الاستعداد وتسلسل الإقلاع من المخطط بدل استبدال IC عشوائيًا.");
+ }else if(kind==="pulse"){
+  evidence.push("السحب يقفز لحظيًا ثم يعود للصفر حسب وصفك.");
+  next.push("سجّل مقدار القفزة ومدتها، وتأكد أن زر الباور وإشارته يستمران بالقدر المتوقع حسب المخطط.");
+  next.push("افحص هل تظهر خطوط التغذية الأساسية لحظيًا، وهل ينهار أحدها؛ استخدم نقاط قياس معروفة ومخطط نفس الموديل.");
+  next.push("السبب قد يكون في تسلسل الإقلاع أو تغذية تنهار أو حماية تعمل؛ لا يكفي شكل السحب وحده لتحديد القطعة.");
+ }else if(kind==="cycling"){
+  evidence.push("السحب متغير أو متكرر، وقد يعكس محاولات إقلاع متكررة أو حملًا يتغير.");
+  next.push("سجّل نمط التكرار وقيمته القصوى، وافحص استقرار الجهد على خرج الباور سبلاي والتوصيلات أولًا.");
+  next.push("قِس خطوط التغذية وتسلسل ظهورها أثناء المحاولة حسب المخطط، وابحث عن خط ينهار أو إشارة إقلاع مفقودة.");
+ }else if(kind==="steady"){
+  evidence.push("يوجد سحب مستمر بعد الضغط وفق البيانات، لكن ذلك لا يثبت أن الجهاز أقلع.");
+  next.push("تحقق من علامات الإقلاع الفعلية: اهتزاز أو صوت أو تعرف الكمبيوتر أو استجابة الشاشة.");
+  next.push("إذا لم يقلع، قارن السحب بجهاز مماثل/مرجع موثوق، ثم افحص خطوط التغذية وإشارات الساعة والريست حسب المخطط والخبرة.");
+ }else if(kind==="high"){
+  evidence.push("تم اختيار سحب مرتفع أو سخونة سريعة؛ لا يمكن تحديد قيمة غير طبيعية دون مرجع الموديل وظروف الاختبار.");
+  next.push("أوقف التغذية فورًا إذا ظهرت سخونة سريعة أو تجاوز السحب الحد الآمن. لا تكرر التشغيل لمجرد جمع قراءات.");
+  next.push("افصل الطاقة، ثم افحص المقاومة إلى الأرضي على الخط المحدد بالمخطط بعد فصل البطارية، وقارن بمرجع مناسب.");
+  next.push("لا تحقن جهدًا في خط مجهول ولا تستخدم التبريد/الحرارة لتحديد قطعة قبل تحديد الخط وحدوده.");
+ }else if(kind==="normal"){
+  evidence.push("تم اختيار أن السحب يتغير والجهاز يبدو أنه يقلع؛ تأكد من الإقلاع بعلامة عملية.");
+  next.push("إذا كان الجهاز يقلع فعلًا، سجّل نمط السحب في وضع الاستعداد وأثناء التشغيل وقارنه بمرجع نفس الموديل عند الحاجة.");
+  next.push("إذا كانت هناك مشكلة أخرى رغم الإقلاع، ابدأ بمسار العطل المحدد بدل الاعتماد على السحب وحده.");
+ }
+ if(before>0&&!nearZero(before))evidence.push("يوجد سحب قبل الضغط؛ قد يكون طبيعيًا أو غير طبيعي حسب الجهاز والتوصيل ووضع الاستعداد، لذا يلزم مرجع الموديل.");
+ if(after<before)evidence.push("القراءة بعد الضغط أقل من قبل الضغط؛ أعد القياس وتأكد من ثبات التوصيل وتوقيت القراءة قبل تفسيرها.");
+ if(voltage!==null)evidence.push("الجهد الذي أدخلته هو "+voltage+"V؛ لا يمكن الحكم على ملاءمته من دون مواصفات الجهاز وطريقة توصيل الباور سبلاي.");
+ evidence.push("المنصة المدخلة: "+platformName+". نوع المعالج لا يحدد وحده نمط سحب ثابتًا لجميع الأجهزة.");
+ const out=["تحليل سحبات الباور سبلاي — فني موبايلي","الموديل: "+model,"المنصة: "+platformName,"الجهد المدخل: "+(voltage===null?"لم يُسجّل":voltage+" V"),"السحب قبل الضغط: "+before+" A","السحب أثناء/بعد الضغط: "+after+" A","النمط المختار: "+({zero:"صفر تقريبًا",pulse:"قفزة لحظية ثم صفر",cycling:"سحب متغير/متكرر",steady:"سحب مستمر والجهاز لا يقلع",high:"سحب مرتفع أو سخونة",normal:"الجهاز يبدو أنه يقلع"})[kind],"","ملاحظات أولية:",...evidence.map(x=>"• "+x),"","خطوات الفحص التالية:",...next.map((x,i)=>(i+1)+") "+x),"","ملاحظات الفني: "+notes,"","تنبيه: هذه احتمالات تعليمية وليست تشخيصًا نهائيًا. القيم تختلف حسب الموديل واللوحة وإعدادات الاختبار؛ أكّد كل خطوة بالمخطط والقياس الآمن."];
+ lastDrawAnalysis=out.join("\n");document.getElementById("drawResult").textContent=lastDrawAnalysis;document.getElementById("drawResult").classList.remove("hidden");document.getElementById("drawResultActions").classList.remove("hidden");
+}
+function copyDrawResult(){if(lastDrawAnalysis)copyText(lastDrawAnalysis)}
+function sendDrawToAI(){showAI();document.getElementById("fault").value="تحليل سحبات الباور سبلاي — فاصل باور/سلوك تيار";document.getElementById("readings").value=lastDrawAnalysis||"لم يتم إنشاء تحليل بعد";document.getElementById("aiPrompt").classList.add("hidden")}
 
 if ("serviceWorker" in navigator) {
  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
